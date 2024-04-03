@@ -1,13 +1,23 @@
 package br.com.carlao.bytebank.domain.conta;
 
+import br.com.carlao.bytebank.ConnectionFactory;
 import br.com.carlao.bytebank.domain.RegraDeNegocioException;
 import br.com.carlao.bytebank.domain.cliente.Cliente;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ContaService {
+
+    private ConnectionFactory connectionFactory;
+
+    public ContaService() {
+        this.connectionFactory = new ConnectionFactory();
+    }
 
     private Set<Conta> contas = new HashSet<>();
 
@@ -27,7 +37,25 @@ public class ContaService {
             throw new RegraDeNegocioException("Já existe outra conta aberta com o mesmo número!");
         }
 
-        contas.add(conta);
+        String sql = "INSERT INTO conta (numero, saldo, cliente_nome, cliente_cpf, cliente_email)" +
+                "VALUES(?,?,?,?,?)";
+
+        Connection conn = connectionFactory.conex();
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, conta.getNumero());
+            ps.setBigDecimal(2, BigDecimal.ZERO);
+            ps.setString(3, dadosDaConta.dadosCliente().nome());
+            ps.setString(4, dadosDaConta.dadosCliente().cpf());
+            ps.setString(5, dadosDaConta.dadosCliente().email());
+
+            ps.execute();
+
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public void realizarSaque(Integer numeroDaConta, BigDecimal valor) {
