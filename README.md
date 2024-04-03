@@ -38,4 +38,6 @@ O projeto desse repositório foi desenvolvido por meio de um curso e utilizado n
 
 ## Alterações
 
-- [x] 
+-  Para simplificar e encapsular a criação da conexão, usei a classe ConnectionFactory;
+-   Encapsulando a criação de um objeto com o Factory Method
+- melhorarando o código definindo responsabilidades, criando uma classe DAO (Data Access Object), que ficará responsável por toda integração com o banco de dados.
